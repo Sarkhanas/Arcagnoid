@@ -5,9 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class GameOverScene : MonoBehaviour
 {
+    public static int currentSceneIndex;
+
     public void ResetGame()
     {
-        SceneManager.LoadScene("Level1");
+        SceneManager.LoadScene(currentSceneIndex);
     }
 
     public void ExitGame()

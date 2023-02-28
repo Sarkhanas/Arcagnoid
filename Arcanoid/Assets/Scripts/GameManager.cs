@@ -6,19 +6,29 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public int lives = 3;
-    public GameObject prefab;
 
-    public List<Brick> brickMap;
-    public List<Vector2> positions;
+    public List<Brick> prefs;
+    private List<Vector2> positions = new List<Vector2>();
 
     private void Start()
     {
-        FindObjectOfType<Counter>().ChangeHealth(lives);
-
-        for (int i = 0; i < brickMap.Count; i++)
+        if (SceneManager.GetActiveScene().buildIndex == 3)
         {
-            positions.Add(brickMap[i].transform.position);
+            FindObjectOfType<Counter>().ChangeHealth(lives);
+
+            for (int i = 0; i < gameObject.transform.childCount; i++)
+            {
+                positions.Add(gameObject.transform.GetChild(i).transform.position);
+            }
+
+            for (int i = 0; i < gameObject.transform.childCount; i++)
+            {
+                Destroy(gameObject.transform.GetChild(i).gameObject);
+            }
+
+            Generate();
         }
+        
     }
 
     public void LosseHealth()
@@ -28,6 +38,7 @@ public class GameManager : MonoBehaviour
 
         if (lives <= 0)
         {
+            GameOverScene.currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
             SceneManager.LoadScene("GameOver");
         } else
         {
@@ -60,15 +71,21 @@ public class GameManager : MonoBehaviour
 
     public void Generate()
     {
-        Color[] colors = new Color[] { new Color(102, 56, 104), new Color(206, 88, 19), new Color(231, 198, 71), new Color(23, 129, 94) , new Color(22, 71, 90) };
-
         ResetLevel();
-        brickMap = new List<Brick>();
+
+        List<Color> colors = new List<Color>() {
+            new Color(102f/255f, 56f / 255f, 104f / 255f),
+            new Color(206f / 255f, 88f / 255f, 19f / 255f),
+            new Color(231f / 255f, 198f / 255f, 71f / 255f),
+            new Color(23f / 255f, 129f / 255f, 94f / 255f),
+            new Color(22f / 255f, 71f / 255f, 90f / 255f) };
 
         for (int i = 0; i < positions.Count; i++)
         {
-            GameObject obj = Instantiate(prefab, positions[i], Quaternion.identity, gameObject.transform);
-            obj.GetComponent<SpriteRenderer>().color = colors[Random.Range(0, colors.Length)];
+            Brick brick = prefs[Random.Range(0, prefs.Count)];
+            brick.changColor(colors[Random.Range(0, colors.Count)]);
+            brick.GetComponent<SpriteRenderer>().color = colors[Random.Range(0, colors.Count)];
+            Instantiate(brick, positions[i], Quaternion.identity, gameObject.transform);
         }
     }
 }

@@ -33,6 +33,13 @@ public class Brick : MonoBehaviour
 
             Destroy(gameObject); 
         }
+
+        
+    }
+
+    public void changColor(Color32 color)
+    {
+        gameObject.GetComponent<SpriteRenderer>().color = color;
     }
 
 }
